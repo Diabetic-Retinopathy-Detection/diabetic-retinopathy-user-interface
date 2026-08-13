@@ -1,0 +1,13 @@
+.message {
+  border-radius: 10px;
+  background: #eef8f7;
+  color: #19545a;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 12px 14px;
+}
+
+.error {
+  background: #fff1ef;
+  color: #9d3428;
+}
