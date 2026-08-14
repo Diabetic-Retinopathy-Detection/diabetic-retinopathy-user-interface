@@ -1,0 +1,82 @@
+.panel {
+  grid-column: 1 / -1;
+  border: 1px solid #b9d8d5;
+  border-radius: 16px;
+  background: #fff;
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.eyebrow {
+  color: #0d6970;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.header h2 {
+  margin-top: 6px;
+  color: #18333d;
+  font-size: clamp(26px, 5vw, 40px);
+  font-weight: 650;
+}
+
+.summary {
+  margin-top: 8px;
+  color: #61737d;
+  font-size: 14px;
+}
+
+.back {
+  flex: 0 0 auto;
+  border: 1px solid #b9d8d5;
+  border-radius: 999px;
+  background: transparent;
+  color: #0d6970;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  padding: 10px 14px;
+}
+
+.probabilities {
+  display: grid;
+  gap: 14px;
+  max-width: 680px;
+  margin-top: 28px;
+}
+
+.probabilityHeader {
+  display: flex;
+  justify-content: space-between;
+  color: #18333d;
+  font-size: 14px;
+}
+
+.track {
+  height: 8px;
+  margin-top: 6px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: #e3eded;
+}
+
+.fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #0d6970;
+}
+
+@media (max-width: 560px) {
+  .header {
+    flex-direction: column;
+  }
+}

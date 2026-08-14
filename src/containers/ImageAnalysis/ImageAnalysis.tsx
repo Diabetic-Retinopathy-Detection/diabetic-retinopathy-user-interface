@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import AnnotationCanvas from "@/components/AnnotationCanvas/AnnotationCanvas";
 import AnnotationList from "@/components/AnnotationList/AnnotationList";
 import ImageUploader from "@/components/ImageUploader/ImageUploader";
+import PredictionResult from "@/components/PredictionResult/PredictionResult";
 import StatusMessage from "@/components/StatusMessage/StatusMessage";
 import { predictImage } from "@/lib/api/predictImage";
 import type { Annotation } from "@/types/annotation";
+import { NO_RETINOPATHY_GRADE, type GradeValue } from "@/types/grade";
 import type { ImageStatus } from "@/types/image";
 import type { PredictionResponse } from "@/types/prediction";
 import styles from "./ImageAnalysis.module.css";
@@ -18,6 +20,8 @@ export default function ImageAnalysis() {
   const [prediction, setPrediction] = useState<PredictionResponse>();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const [focusedAnnotationId, setFocusedAnnotationId] = useState<string>();
+  const [selectedGrade, setSelectedGrade] = useState<GradeValue>();
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -33,6 +37,8 @@ export default function ImageAnalysis() {
     setPrediction(undefined);
     setAnnotations([]);
     setFocusedAnnotationId(undefined);
+    setSelectedGrade(undefined);
+    setHasSubmitted(false);
     setError(undefined);
     setStatus("loading");
 
@@ -57,6 +63,8 @@ export default function ImageAnalysis() {
     setPrediction(undefined);
     setAnnotations([]);
     setFocusedAnnotationId(undefined);
+    setSelectedGrade(undefined);
+    setHasSubmitted(false);
     setError(undefined);
     setStatus("idle");
   }
@@ -66,6 +74,11 @@ export default function ImageAnalysis() {
     setStatus("error");
   }
 
+  const meetsAnnotationRequirements =
+    selectedGrade === NO_RETINOPATHY_GRADE ||
+    (selectedGrade !== undefined && annotations.length > 0);
+  const canSubmit = meetsAnnotationRequirements && prediction !== undefined;
+
   return (
     <section className={styles.container}>
       {!file || !previewUrl ? (
@@ -74,7 +87,7 @@ export default function ImageAnalysis() {
           onFileSelected={handleFileSelected}
           onValidationError={handleValidationError}
         />
-      ) : (
+      ) : !hasSubmitted ? (
         <AnnotationCanvas
           className={styles.canvas}
           file={file}
@@ -86,9 +99,9 @@ export default function ImageAnalysis() {
           }}
           onReset={reset}
         />
-      )}
+      ) : null}
 
-      {annotations.length > 0 && (
+      {file && previewUrl && !hasSubmitted && (
         <AnnotationList
           className={styles.annotationList}
           annotations={annotations}
@@ -110,6 +123,10 @@ export default function ImageAnalysis() {
             setAnnotations([]);
             setFocusedAnnotationId(undefined);
           }}
+          selectedGrade={selectedGrade}
+          canSubmit={canSubmit}
+          onGradeChange={setSelectedGrade}
+          onSubmit={() => setHasSubmitted(true)}
         />
       )}
 
@@ -119,10 +136,13 @@ export default function ImageAnalysis() {
         </div>
       )}
 
-      {prediction && (
-        <p className={styles.hiddenResult} aria-hidden="true">
-          Prediction received: {prediction.predicted_label}
-        </p>
+      {hasSubmitted && prediction && selectedGrade !== undefined && (
+        <PredictionResult
+          prediction={prediction}
+          selectedGrade={selectedGrade}
+          annotationCount={annotations.length}
+          onBack={() => setHasSubmitted(false)}
+        />
       )}
     </section>
   );
