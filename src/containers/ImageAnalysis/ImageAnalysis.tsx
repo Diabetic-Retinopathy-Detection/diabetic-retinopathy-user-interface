@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 
-import ImagePreview from "@/components/ImagePreview/ImagePreview";
+import AnnotationCanvas from "@/components/AnnotationCanvas/AnnotationCanvas";
 import ImageUploader from "@/components/ImageUploader/ImageUploader";
 import StatusMessage from "@/components/StatusMessage/StatusMessage";
 import { predictImage } from "@/lib/api/predictImage";
+import type { Annotation } from "@/types/annotation";
 import type { ImageStatus } from "@/types/image";
 import type { PredictionResponse } from "@/types/prediction";
 import styles from "./ImageAnalysis.module.css";
@@ -14,6 +15,7 @@ export default function ImageAnalysis() {
   const [status, setStatus] = useState<ImageStatus>("idle");
   const [error, setError] = useState<string>();
   const [prediction, setPrediction] = useState<PredictionResponse>();
+  const [annotations, setAnnotations] = useState<Annotation[]>([]);
 
   useEffect(() => {
     return () => {
@@ -27,6 +29,7 @@ export default function ImageAnalysis() {
     setFile(selectedFile);
     setPreviewUrl(URL.createObjectURL(selectedFile));
     setPrediction(undefined);
+    setAnnotations([]);
     setError(undefined);
     setStatus("loading");
 
@@ -49,6 +52,7 @@ export default function ImageAnalysis() {
     setFile(undefined);
     setPreviewUrl(undefined);
     setPrediction(undefined);
+    setAnnotations([]);
     setError(undefined);
     setStatus("idle");
   }
@@ -66,7 +70,15 @@ export default function ImageAnalysis() {
           onValidationError={handleValidationError}
         />
       ) : (
-        <ImagePreview file={file} previewUrl={previewUrl} onReset={reset} />
+        <AnnotationCanvas
+          file={file}
+          previewUrl={previewUrl}
+          annotations={annotations}
+          onAnnotationCreated={(annotation) =>
+            setAnnotations((current) => [...current, annotation])
+          }
+          onReset={reset}
+        />
       )}
 
       {status !== "idle" && (
