@@ -79,7 +79,13 @@ export default function AnnotationList({
           </div>
         ))}
       </div>
-      <div className={styles.submitRow}>
+      <form
+        className={styles.submitRow}
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSubmit();
+        }}
+      >
         <fieldset className={styles.grades}>
           <legend>Your assessment</legend>
           {GRADES.map((grade) => (
@@ -98,13 +104,12 @@ export default function AnnotationList({
         </fieldset>
         <button
           className={styles.submit}
-          type="button"
+          type="submit"
           disabled={!canSubmit}
-          onClick={onSubmit}
         >
           Show model result
         </button>
-      </div>
+      </form>
     </aside>
   );
 }

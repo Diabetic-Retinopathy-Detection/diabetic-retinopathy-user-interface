@@ -1,4 +1,5 @@
 .panel {
+  container-type: inline-size;
   border: 1px solid #d9e2e5;
   border-radius: 16px;
   background: #fff;
@@ -107,9 +108,9 @@
 }
 
 .submitRow {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
   align-items: flex-end;
-  justify-content: space-between;
   gap: 18px;
   margin-top: 22px;
   border-top: 1px solid #e5ecee;
@@ -160,7 +161,7 @@
 }
 
 .submit {
-  flex: 0 0 auto;
+  justify-self: end;
   border: 0;
   border-radius: 999px;
   background: #0d6970;
@@ -184,9 +185,11 @@
     gap: 12px;
   }
 
+}
+
+@container (max-width: 520px) {
   .submitRow {
-    align-items: stretch;
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
 
   .submit {
