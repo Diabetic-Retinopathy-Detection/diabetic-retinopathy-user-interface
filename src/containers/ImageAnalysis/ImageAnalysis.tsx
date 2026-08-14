@@ -70,11 +70,13 @@ export default function ImageAnalysis() {
     <section className={styles.container}>
       {!file || !previewUrl ? (
         <ImageUploader
+          className={styles.uploader}
           onFileSelected={handleFileSelected}
           onValidationError={handleValidationError}
         />
       ) : (
         <AnnotationCanvas
+          className={styles.canvas}
           file={file}
           previewUrl={previewUrl}
           annotations={annotations}
@@ -88,6 +90,7 @@ export default function ImageAnalysis() {
 
       {annotations.length > 0 && (
         <AnnotationList
+          className={styles.annotationList}
           annotations={annotations}
           focusedAnnotationId={focusedAnnotationId}
           onTextChange={(id, text) => {
@@ -111,7 +114,9 @@ export default function ImageAnalysis() {
       )}
 
       {status !== "idle" && (
-        <StatusMessage status={status} message={error} />
+        <div className={styles.status}>
+          <StatusMessage status={status} message={error} />
+        </div>
       )}
 
       {prediction && (

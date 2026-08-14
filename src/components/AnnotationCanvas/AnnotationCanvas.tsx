@@ -5,6 +5,7 @@ import type { Annotation } from "@/types/annotation";
 import styles from "./AnnotationCanvas.module.css";
 
 type AnnotationCanvasProps = {
+  className?: string;
   file: File;
   previewUrl: string;
   annotations: Annotation[];
@@ -84,6 +85,7 @@ function getRectangle(start: Point, end: Point): Annotation {
 }
 
 export default function AnnotationCanvas({
+  className,
   file,
   previewUrl,
   annotations,
@@ -169,7 +171,7 @@ export default function AnnotationCanvas({
     : undefined;
 
   return (
-    <section className={styles.wrapper} aria-label="Selected image">
+    <section className={`${styles.wrapper} ${className ?? ""}`} aria-label="Selected image">
       <div ref={frameRef} className={styles.imageFrame}>
         <Image
           ref={imageRef}
@@ -184,7 +186,7 @@ export default function AnnotationCanvas({
         />
         <svg
           className={styles.overlay}
-          viewBox="0 0 100 100"
+          viewBox="0 0 1 1"
           preserveAspectRatio="none"
           onPointerDown={(event) => {
             const point = getCurrentPoint(event);

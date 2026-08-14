@@ -1,7 +1,17 @@
 .container {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
   gap: 18px;
+}
+
+.uploader,
+.status {
+  grid-column: 1 / -1;
+}
+
+.canvas,
+.annotationList {
+  min-width: 0;
 }
 
 .hiddenResult {
@@ -11,4 +21,17 @@
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .container {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .canvas,
+  .annotationList,
+  .status,
+  .uploader {
+    grid-column: 1;
+  }
 }

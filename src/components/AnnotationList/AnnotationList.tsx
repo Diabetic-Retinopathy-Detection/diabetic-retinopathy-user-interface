@@ -4,6 +4,7 @@ import type { Annotation } from "@/types/annotation";
 import styles from "./AnnotationList.module.css";
 
 type AnnotationListProps = {
+  className?: string;
   annotations: Annotation[];
   focusedAnnotationId?: string;
   onTextChange: (id: string, text: string) => void;
@@ -12,6 +13,7 @@ type AnnotationListProps = {
 };
 
 export default function AnnotationList({
+  className,
   annotations,
   focusedAnnotationId,
   onTextChange,
@@ -26,7 +28,7 @@ export default function AnnotationList({
   }, [focusedAnnotationId]);
 
   return (
-    <aside className={styles.panel} aria-label="Region annotations">
+    <aside className={`${styles.panel} ${className ?? ""}`} aria-label="Region annotations">
       <div className={styles.heading}>
         <div>
           <p className={styles.eyebrow}>Your observations</p>
