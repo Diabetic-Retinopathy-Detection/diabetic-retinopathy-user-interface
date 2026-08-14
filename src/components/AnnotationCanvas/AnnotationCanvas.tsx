@@ -1,6 +1,7 @@
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 
+import { getAnnotationColor } from "@/lib/annotations/colors";
 import type { Annotation } from "@/types/annotation";
 import styles from "./AnnotationCanvas.module.css";
 
@@ -9,7 +10,9 @@ type AnnotationCanvasProps = {
   file: File;
   previewUrl: string;
   annotations: Annotation[];
+  hoveredAnnotationId?: string;
   onAnnotationCreated: (annotation: Annotation) => void;
+  onAnnotationHover: (annotationId?: string) => void;
   onReset: () => void;
 };
 
@@ -89,7 +92,9 @@ export default function AnnotationCanvas({
   file,
   previewUrl,
   annotations,
+  hoveredAnnotationId,
   onAnnotationCreated,
+  onAnnotationHover,
   onReset,
 }: AnnotationCanvasProps) {
   const frameRef = useRef<HTMLDivElement>(null);
@@ -149,9 +154,19 @@ export default function AnnotationCanvas({
     const y = imageBounds.top + annotation.y * imageBounds.height;
     const width = annotation.width * imageBounds.width;
     const height = annotation.height * imageBounds.height;
+    const isHovered = hoveredAnnotationId === annotation.id;
+    const color = getAnnotationColor(index);
 
     return (
-      <g key={annotation.id}>
+      <g
+        key={annotation.id}
+        data-annotation-id={annotation.id}
+        data-annotation-target="canvas"
+        className={isHovered ? styles.hovered : ""}
+        style={{ "--annotation-color": color } as CSSProperties}
+        onPointerEnter={() => onAnnotationHover(annotation.id)}
+        onPointerLeave={() => onAnnotationHover(undefined)}
+      >
         <rect
           className={styles.annotation}
           x={x}
@@ -163,6 +178,23 @@ export default function AnnotationCanvas({
           {index + 1}
         </text>
       </g>
+    );
+  }
+
+  function renderAnchor(annotation: Annotation) {
+    const left =
+      (imageBounds.left + (annotation.x + annotation.width / 2) * imageBounds.width) * 100;
+    const top =
+      (imageBounds.top + (annotation.y + annotation.height / 2) * imageBounds.height) * 100;
+
+    return (
+      <span
+        key={annotation.id}
+        className={styles.anchor}
+        data-annotation-id={annotation.id}
+        data-annotation-target="canvas-anchor"
+        style={{ left: `${left}%`, top: `${top}%` }}
+      />
     );
   }
 
@@ -206,6 +238,9 @@ export default function AnnotationCanvas({
           {annotations.map(renderRectangle)}
           {previewRectangle && renderRectangle(previewRectangle, annotations.length)}
         </svg>
+        <div className={styles.anchors} aria-hidden="true">
+          {annotations.map(renderAnchor)}
+        </div>
       </div>
       <div className={styles.details}>
         <div>

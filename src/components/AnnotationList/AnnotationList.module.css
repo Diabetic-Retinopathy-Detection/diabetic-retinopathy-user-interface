@@ -6,6 +6,10 @@
   padding: 20px;
 }
 
+.scrollable {
+  overflow-y: auto;
+}
+
 .heading {
   display: flex;
   align-items: flex-start;
@@ -53,7 +57,14 @@
 
 .item {
   border-top: 1px solid #e5ecee;
+  border-left: 3px solid var(--annotation-color);
   padding-top: 14px;
+  padding-left: 12px;
+  transition: background 160ms ease;
+}
+
+.hovered {
+  background: color-mix(in srgb, var(--annotation-color) 7%, transparent);
 }
 
 .label {
@@ -71,8 +82,8 @@
   height: 23px;
   place-items: center;
   border-radius: 50%;
-  background: #d9efed;
-  color: #0d6970;
+  background: color-mix(in srgb, var(--annotation-color) 16%, white);
+  color: var(--annotation-color);
   font-size: 12px;
 }
 

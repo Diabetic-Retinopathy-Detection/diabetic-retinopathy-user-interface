@@ -30,15 +30,34 @@
   touch-action: none;
 }
 
+.anchors {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.anchor {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%);
+}
+
 .annotation {
-  fill: rgba(13, 105, 112, 0.16);
-  stroke: #0d6970;
+  fill: var(--annotation-color);
+  fill-opacity: 0.16;
+  stroke: var(--annotation-color);
   stroke-width: 0.35;
   vector-effect: non-scaling-stroke;
 }
 
+.hovered .annotation {
+  fill-opacity: 0.3;
+  stroke-width: 0.55;
+}
+
 .label {
-  fill: #0d6970;
+  fill: var(--annotation-color);
   font-size: 3px;
   font-weight: 700;
   pointer-events: none;

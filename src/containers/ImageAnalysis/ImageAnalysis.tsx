@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import AnnotationCanvas from "@/components/AnnotationCanvas/AnnotationCanvas";
+import AnnotationConnector from "@/components/AnnotationConnector/AnnotationConnector";
 import AnnotationList from "@/components/AnnotationList/AnnotationList";
 import ImageUploader from "@/components/ImageUploader/ImageUploader";
 import PredictionResult from "@/components/PredictionResult/PredictionResult";
 import StatusMessage from "@/components/StatusMessage/StatusMessage";
+import { getAnnotationColor } from "@/lib/annotations/colors";
 import { predictImage } from "@/lib/api/predictImage";
 import type { Annotation } from "@/types/annotation";
 import { NO_RETINOPATHY_GRADE, type GradeValue } from "@/types/grade";
@@ -22,6 +24,8 @@ export default function ImageAnalysis() {
   const [focusedAnnotationId, setFocusedAnnotationId] = useState<string>();
   const [selectedGrade, setSelectedGrade] = useState<GradeValue>();
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [hoveredAnnotationId, setHoveredAnnotationId] = useState<string>();
+  const containerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     return () => {
@@ -39,6 +43,7 @@ export default function ImageAnalysis() {
     setFocusedAnnotationId(undefined);
     setSelectedGrade(undefined);
     setHasSubmitted(false);
+    setHoveredAnnotationId(undefined);
     setError(undefined);
     setStatus("loading");
 
@@ -65,6 +70,7 @@ export default function ImageAnalysis() {
     setFocusedAnnotationId(undefined);
     setSelectedGrade(undefined);
     setHasSubmitted(false);
+    setHoveredAnnotationId(undefined);
     setError(undefined);
     setStatus("idle");
   }
@@ -80,7 +86,7 @@ export default function ImageAnalysis() {
   const canSubmit = meetsAnnotationRequirements && prediction !== undefined;
 
   return (
-    <section className={styles.container}>
+    <section ref={containerRef} className={styles.container}>
       {!file || !previewUrl ? (
         <ImageUploader
           className={styles.uploader}
@@ -93,10 +99,12 @@ export default function ImageAnalysis() {
           file={file}
           previewUrl={previewUrl}
           annotations={annotations}
+          hoveredAnnotationId={hoveredAnnotationId}
           onAnnotationCreated={(annotation) => {
             setAnnotations((current) => [...current, annotation]);
             setFocusedAnnotationId(annotation.id);
           }}
+          onAnnotationHover={setHoveredAnnotationId}
           onReset={reset}
         />
       ) : null}
@@ -105,6 +113,7 @@ export default function ImageAnalysis() {
         <AnnotationList
           className={styles.annotationList}
           annotations={annotations}
+          hoveredAnnotationId={hoveredAnnotationId}
           focusedAnnotationId={focusedAnnotationId}
           onTextChange={(id, text) => {
             setAnnotations((current) =>
@@ -113,6 +122,7 @@ export default function ImageAnalysis() {
               ),
             );
           }}
+          onAnnotationHover={setHoveredAnnotationId}
           onRemove={(id) => {
             setAnnotations((current) =>
               current.filter((annotation) => annotation.id !== id),
@@ -127,6 +137,16 @@ export default function ImageAnalysis() {
           canSubmit={canSubmit}
           onGradeChange={setSelectedGrade}
           onSubmit={() => setHasSubmitted(true)}
+        />
+      )}
+
+      {hoveredAnnotationId && (
+        <AnnotationConnector
+          annotationId={hoveredAnnotationId}
+          color={getAnnotationColor(
+            annotations.findIndex((annotation) => annotation.id === hoveredAnnotationId),
+          )}
+          containerRef={containerRef}
         />
       )}
 
