@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import AnnotationCanvas from "@/components/AnnotationCanvas/AnnotationCanvas";
+import AnnotationList from "@/components/AnnotationList/AnnotationList";
 import ImageUploader from "@/components/ImageUploader/ImageUploader";
 import StatusMessage from "@/components/StatusMessage/StatusMessage";
 import { predictImage } from "@/lib/api/predictImage";
@@ -16,6 +17,7 @@ export default function ImageAnalysis() {
   const [error, setError] = useState<string>();
   const [prediction, setPrediction] = useState<PredictionResponse>();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
+  const [focusedAnnotationId, setFocusedAnnotationId] = useState<string>();
 
   useEffect(() => {
     return () => {
@@ -30,6 +32,7 @@ export default function ImageAnalysis() {
     setPreviewUrl(URL.createObjectURL(selectedFile));
     setPrediction(undefined);
     setAnnotations([]);
+    setFocusedAnnotationId(undefined);
     setError(undefined);
     setStatus("loading");
 
@@ -53,6 +56,7 @@ export default function ImageAnalysis() {
     setPreviewUrl(undefined);
     setPrediction(undefined);
     setAnnotations([]);
+    setFocusedAnnotationId(undefined);
     setError(undefined);
     setStatus("idle");
   }
@@ -74,10 +78,35 @@ export default function ImageAnalysis() {
           file={file}
           previewUrl={previewUrl}
           annotations={annotations}
-          onAnnotationCreated={(annotation) =>
-            setAnnotations((current) => [...current, annotation])
-          }
+          onAnnotationCreated={(annotation) => {
+            setAnnotations((current) => [...current, annotation]);
+            setFocusedAnnotationId(annotation.id);
+          }}
           onReset={reset}
+        />
+      )}
+
+      {annotations.length > 0 && (
+        <AnnotationList
+          annotations={annotations}
+          focusedAnnotationId={focusedAnnotationId}
+          onTextChange={(id, text) => {
+            setAnnotations((current) =>
+              current.map((annotation) =>
+                annotation.id === id ? { ...annotation, text } : annotation,
+              ),
+            );
+          }}
+          onRemove={(id) => {
+            setAnnotations((current) =>
+              current.filter((annotation) => annotation.id !== id),
+            );
+            setFocusedAnnotationId(undefined);
+          }}
+          onClear={() => {
+            setAnnotations([]);
+            setFocusedAnnotationId(undefined);
+          }}
         />
       )}
 
