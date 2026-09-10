@@ -7,6 +7,7 @@ import {
 import styles from "./ImageUploader.module.css";
 
 type ImageUploaderProps = {
+  className?: string;
   disabled?: boolean;
   onFileSelected: (file: File) => void;
   onValidationError: (message: string) => void;
@@ -19,6 +20,7 @@ function isAcceptedImage(file: File) {
 }
 
 export default function ImageUploader({
+  className,
   disabled = false,
   onFileSelected,
   onValidationError,
@@ -44,7 +46,7 @@ export default function ImageUploader({
 
   return (
     <div
-      className={`${styles.dropzone} ${isDragging ? styles.dragging : ""}`}
+      className={`${styles.dropzone} ${className ?? ""} ${isDragging ? styles.dragging : ""}`}
       onDragEnter={(event) => {
         event.preventDefault();
         if (!disabled) setIsDragging(true);

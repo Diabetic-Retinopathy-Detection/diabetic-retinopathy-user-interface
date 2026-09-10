@@ -1,14 +1,29 @@
 .container {
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
   gap: 18px;
 }
 
-.hiddenResult {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
+.uploader,
+.status {
+  grid-column: 1 / -1;
+}
+
+.canvas,
+.annotationList {
+  min-width: 0;
+}
+
+@media (max-width: 760px) {
+  .container {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .canvas,
+  .annotationList,
+  .status,
+  .uploader {
+    grid-column: 1;
+  }
 }

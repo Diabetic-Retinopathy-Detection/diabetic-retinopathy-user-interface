@@ -10,7 +10,7 @@
 .main {
   display: flex;
   width: 100%;
-  max-width: 860px;
+  max-width: 90vw;
   flex-direction: column;
   gap: 34px;
   padding: 72px 32px;
